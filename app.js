@@ -43,6 +43,10 @@ app.use(expressSession({
 app.use(passport.initialize());
 app.use(passport.session());
 
+passport.use(new localStrategy(userModel.authenticate()));
+passport.serializeUser(userModel.serializeUser());
+passport.deserializeUser(userModel.deserializeUser());
+
 //local variables
 app.use((req, res, next) => {
   res.locals.error = req.flash("error");
@@ -50,9 +54,9 @@ app.use((req, res, next) => {
   next();
 });
 
-passport.use(new localStrategy(userModel.authenticate()));
-passport.serializeUser(userModel.serializeUser());
-passport.deserializeUser(userModel.deserializeUser());
+//Const variables
+const port = process.env.PORT || 3000;
+
 
 //ROUTES
 app.use(dogRoutes);
@@ -60,6 +64,6 @@ app.use(commentRoutes);
 app.use(indexRoutes);
 
 //LISTEN
-app.listen(3000, () => {
+app.listen(port, () => {
   console.log("Listening on port 3000");
 });
