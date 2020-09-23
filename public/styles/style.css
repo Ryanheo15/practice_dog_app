@@ -1,0 +1,17 @@
+/* GENERAL */
+* {
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+main {
+  min-height:94.5vh;
+  background-color:#f7f8fd;
+  padding-bottom:80px;
+}
+
+/* SIGN UP */
+.signup-main form {
+  background-color: #ffffff;
+}

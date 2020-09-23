@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.1/css/all.css"
+          integrity="sha384-O8whS3fhG2OnA5Kas0Y9l3cfpmYjapjI0E4theH4iuMD+pLhbf6JI0jIMfYcK3yZ" crossorigin="anonymous">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <!-- Custom CSS -->
+    <link rel = "stylesheet" href = "../styles/style.css">
+
+    <title>Dog Adoption Page</title>
+</head>
+
+<body>
+  <!-- Header Section -->
+  <header>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+      <div class = "container">
+          <a class="navbar-brand" href="/">Dog Adoption</a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+              <li class="nav-item active">
+                <a class="nav-link" href="/dogs">Home <span class="sr-only">(current)</span></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Features</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Pricing</a>
+              </li>
+
+              <% if(!currentUser) { %>
+                <li class="nav-item">
+                  <a class="nav-link" href="/signup">Sign Up</a>
+                </li>
+
+                <li class="nav-item">
+                  <a class="nav-link" href="/login">Login</a>
+                </li>
+              <% } else { %>
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <%= currentUser.username %>
+                  </a>
+                  <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="#">View Account</a>
+                    <a class="dropdown-item" href="#">Settings</a>
+                    <a class = "dropdown-item" href = "/logout">Logout</a>
+                  </div>
+                </li>
+              <% } %>
+            </ul>
+          </div>
+        </div>
+      </nav>
+  </header>
+
+<main>
+  <div class = "container pt-5">
+
+    <% if(error && error.length > 0) { %>
+      <div class="alert alert-danger" role="alert">
+          <%= error %>
+      </div>
+    <% } %>
+
+    <% if(success && success.length > 0) { %>
+      <div class="alert alert-success" role="alert">
+          <%= success %>
+      </div>
+    <% } %>
+
+    <div class = "row">
+
+      <div class = "col-md-6">
+          <div class="card dog-card">
+            <img class="card-img-top img-fluid" src= "<%= dog.image %>"alt="Card image cap">
+            <div class="card-body">
+              <h5 class="card-title text-center"><%= dog.name %></h5>
+              <h6 class = "text-secondary">Submitted By: <%= dog.author.username %> </h6>
+              <p class="card-text"><b>Type: </b> <%= dog.type %></p>
+              <p class = "card-text"><b>Description: </b> <%= dog.description %></p>
+
+              <div class = "row">
+                <div class = "col-md-6 text-left">
+                  <a class = "btn btn-primary text-white">
+                    Buy Now
+                  </a>
+                </div>
+
+                <% if(currentUser && dog.author.id.equals(currentUser.id)){ %>
+                <div class = "col-md-6 text-right">
+                  <a class = "btn btn-info text-white px-4" href = "/dogs/<%= dog.id %>/edit">
+                    Edit
+                  </a>
+                </div>
+               <% } %>
+              </div>
+            </div>
+          </div>
+      </div>
+
+      <div class = "col-md-6">
+        <div class="card">
+          <div class="card-header">
+            <span>Comments</span>
+
+            <button class = "btn btn-primary float-right add_comment">+</button>
+          </div>
+
+          <form class = "comment-form" method = "POST" action = "/dogs/<%= dog.id %>/comments">
+            <div class = "form-group">
+              <textarea class = "form-control" placeholder = "Add Comment" rows = 5 name = "content"></textarea>
+            </div>
+
+            <div class = "form-group">
+              <button class = "btn btn-primary submit_btn" type = "submit">Submit</button>
+            </div>
+          </form>
+          <ul class="list-group list-group-flush">
+            <% for(let i = 0; i < dog.comments.length; i++){ %>
+              <form class = "pb-3" method = "POST" action = "/dogs/<%= dog.id %>/comments/<%= dog.comments[i]._id%>?_method=DELETE">
+              <li class="list-group-item pt-4"><span class = "bg-light p-2 rounded mr-3"><%= dog.comments[i].author.username %></span> <%= dog.comments[i].content %>
+                <% if(currentUser && dog.comments[i].author.id.equals(currentUser.id)) { %>
+                  <button class = "btn btn-danger float-right text-white" type = "submit">X</button>
+                <% } %>
+
+              </li>
+              </form>
+            <% } %>
+          </ul>
+        </div>
+      </div>
+  </div>
+
+</main>
+
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.15.0/umd/popper.min.js"
+        integrity="sha256-fTuUgtT7O2rqoImwjrhDgbXTKUwyxxujIMRIK7TbuNU=" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+<!-- Custom JS -->
+<script src = "../js/show_dog.js"></script>
+</body>
+</html>
